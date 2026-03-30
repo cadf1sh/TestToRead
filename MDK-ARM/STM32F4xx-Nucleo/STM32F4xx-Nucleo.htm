@@ -3,7 +3,7 @@
 <title>Static Call Graph - [STM32F4xx-Nucleo\STM32F4xx-Nucleo.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image STM32F4xx-Nucleo\STM32F4xx-Nucleo.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6220000: Last Updated: Mon Mar 30 16:35:22 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6220000: Last Updated: Mon Mar 30 16:48:50 2026
 <BR><P>
 <H3>Maximum Stack Usage =        256 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -678,7 +678,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[78]"></a>MotorCtrl_Init</STRONG> (Thumb, 56 bytes, Stack size 0 bytes, motor_ctrl.o(.text.MotorCtrl_Init))
+<P><STRONG><a name="[78]"></a>MotorCtrl_Init</STRONG> (Thumb, 58 bytes, Stack size 0 bytes, motor_ctrl.o(.text.MotorCtrl_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = MotorCtrl_Init &rArr; DRV8313_AllPhaseOff
 </UL>
 <BR>[Calls]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DRV8313_AllPhaseOff
@@ -690,7 +690,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[79]"></a>MotorCtrl_PwmUpdateHandler</STRONG> (Thumb, 340 bytes, Stack size 32 bytes, motor_ctrl.o(.text.MotorCtrl_PwmUpdateHandler))
+<P><STRONG><a name="[79]"></a>MotorCtrl_PwmUpdateHandler</STRONG> (Thumb, 324 bytes, Stack size 32 bytes, motor_ctrl.o(.text.MotorCtrl_PwmUpdateHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = MotorCtrl_PwmUpdateHandler
 </UL>
 <BR>[Calls]<UL><LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DRV8313_SetPhasePwmDuty
@@ -723,7 +723,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[92]"></a>MotorCtrl_SineGetPhaseStepQ16</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, motor_ctrl.o(.text.MotorCtrl_SineGetPhaseStepQ16))
+<P><STRONG><a name="[92]"></a>MotorCtrl_SineGetPhaseStepQ16</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, motor_ctrl.o(.text.MotorCtrl_SineGetPhaseStepQ16))
 <BR><BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
@@ -756,7 +756,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[73]"></a>MotorCtrl_Task</STRONG> (Thumb, 244 bytes, Stack size 8 bytes, motor_ctrl.o(.text.MotorCtrl_Task))
+<P><STRONG><a name="[73]"></a>MotorCtrl_Task</STRONG> (Thumb, 246 bytes, Stack size 8 bytes, motor_ctrl.o(.text.MotorCtrl_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = MotorCtrl_Task &rArr; DRV8313_EnterSafeState
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pwm_out_enable_update_irq

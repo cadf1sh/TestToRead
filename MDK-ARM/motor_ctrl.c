@@ -125,12 +125,6 @@ static uint16_t MotorCtrl_GetAmp(uint16_t current, uint16_t target, uint16_t ste
     return current;
 }
 
-static uint32_t MotorCtrl_FreqToPhaseStepQ16(uint32_t freq_mhz)//相位步进换算。负责把“频率命令”转换成“每次 PWM 更新该前进多少相位”。
-{
-    uint64_t numerator;
-    numerator = (uint64_t)freq_mhz * (uint64_t)SINE_TABLE_SIZE * 65536ULL;
-    return (uint32_t)(numerator / ((uint64_t)Sine_Udate_hz * 1000ULL));
-}
 
 static uint16_t MotorCtrl_SineToDuty(int16_t sine_permille, uint16_t amp_permille)//查表输出转换为占空比
 {
@@ -220,6 +214,11 @@ void MotorCtrl_Stop(void)
     DRV8313_EnterSafeState();
 }
 
+void Motor_speed(uint16_t hz)
+{
+  my_motor.sine.phase_step = hz/64u*64u;
+	return;
+}
 
 void MotorCtrl_Task(void)//电机任务安排
 {
@@ -239,8 +238,7 @@ void MotorCtrl_Task(void)//电机任务安排
         my_motor.sine.current_amp = MotorCtrl_GetAmp(my_motor.sine.current_amp,
                                                               my_motor.sine.target_amp,
                                                               my_motor.sine.amp_ramp);
-//        my_motor.sine.phase_step = MotorCtrl_FreqToPhaseStepQ16(my_motor.sine.current_freq);
-        my_motor.sine.phase_step = 64;
+        Motor_speed(65535);
         return;
     }
 

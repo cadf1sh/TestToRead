@@ -19,6 +19,7 @@ extern uint16_t Sine_Udate_hz;
 void MotorCtrl_Init(void);
 HAL_StatusTypeDef MotorCtrl_Start(void);
 void MotorCtrl_Stop(void);
+void Motor_speed(uint16_t hz);
 void MotorCtrl_Task(void);
 void MotorCtrl_PwmUpdateHandler(void);
 
