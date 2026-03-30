@@ -1,7 +1,7 @@
 #include "motor_ctrl.h"
 #include "drv8313.h"
 #include "pwm_out.h"
-uint16_t Sine_Udate_hz  =240;//微步换相更新频率
+uint16_t Sine_Udate_hz=5000;//微步换相更新频率
 
 typedef struct
 {
@@ -238,7 +238,7 @@ void MotorCtrl_Task(void)//电机任务安排
         my_motor.sine.current_amp = MotorCtrl_GetAmp(my_motor.sine.current_amp,
                                                               my_motor.sine.target_amp,
                                                               my_motor.sine.amp_ramp);
-        Motor_speed(65535);
+        Motor_speed(Sine_Udate_hz);
         return;
     }
 
