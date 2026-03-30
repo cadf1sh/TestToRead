@@ -501,26 +501,6 @@
               <FilePath>.\app_config.h</FilePath>
             </File>
             <File>
-              <FileName>my_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\my_timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>my_timer.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\my_timer.h</FilePath>
-            </File>
-            <File>
-              <FileName>drv8313_io.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\drv8313_io.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv8313_io.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\drv8313_io.h</FilePath>
-            </File>
-            <File>
               <FileName>drv8313.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\drv8313.c</FilePath>
@@ -539,16 +519,6 @@
               <FileName>pwm_out.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\pwm_out.h</FilePath>
-            </File>
-            <File>
-              <FileName>motor_sine_openloop.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\motor_sine_openloop.c</FilePath>
-            </File>
-            <File>
-              <FileName>motor_sine_openloop.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\motor_sine_openloop.h</FilePath>
             </File>
             <File>
               <FileName>motor_ctrl.c</FileName>

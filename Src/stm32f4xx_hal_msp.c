@@ -19,6 +19,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
+/*
+ * 这个文件基本沿用了 ST 原始 TIM_PWMInput 示例的 MSP 模板。
+ * 当前自定义工程里的 TIM1 PWM、TIM4 周期任务定时器、USART2 GPIO/时钟
+ * 都是在各自模块里手动初始化的，所以这里的 HAL_TIM_IC_MspInit
+ * 更像遗留代码，而不是当前主控制链路的关键一环。
+ */
+
 /** @addtogroup STM32F4xx_HAL_Examples
   * @{
   */

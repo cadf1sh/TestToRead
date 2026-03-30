@@ -35,4 +35,4 @@ stm32f4xx-nucleo/drv8313_io.o: drv8313_io.c drv8313_io.h app_config.h \
   ..\..\..\..\..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim_ex.h \
   ..\..\..\..\..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_uart.h \
   ..\..\..\..\..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_usart.h \
-  pwm_out.h
+  gpio_ctrl.h pwm_out.h

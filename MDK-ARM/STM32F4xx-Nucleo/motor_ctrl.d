@@ -35,4 +35,6 @@ stm32f4xx-nucleo/motor_ctrl.o: motor_ctrl.c motor_ctrl.h app_config.h \
   ..\..\..\..\..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim_ex.h \
   ..\..\..\..\..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_uart.h \
   ..\..\..\..\..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_usart.h \
-  drv8313.h motor_sine_openloop.h
+  D:\Keil_v5\ARM\ARMCLANG\bin\..\include\stdio.h ..\Inc\main.h \
+  ..\..\..\..\..\..\Drivers\BSP\STM32F4xx-Nucleo\stm32f4xx_nucleo.h \
+  drv8313.h my_uart.h pwm_out.h

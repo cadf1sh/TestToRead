@@ -1,4 +1,4 @@
-stm32f4xx-nucleo/my_uart.o: my_uart.c my_uart.h \
+stm32f4xx-nucleo/my_uart.o: my_uart.c my_uart.h app_config.h \
   ..\..\..\..\..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h \
   ..\Inc\stm32f4xx_hal_conf.h \
   ..\..\..\..\..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rcc.h \
@@ -35,5 +35,6 @@ stm32f4xx-nucleo/my_uart.o: my_uart.c my_uart.h \
   ..\..\..\..\..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim_ex.h \
   ..\..\..\..\..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_uart.h \
   ..\..\..\..\..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_usart.h \
-  D:\Keil_v5\ARM\ARMCLANG\bin\..\include\stdio.h \
-  D:\Keil_v5\ARM\ARMCLANG\bin\..\include\string.h
+  D:\Keil_v5\ARM\ARMCLANG\bin\..\include\stdio.h ..\Inc\main.h \
+  ..\..\..\..\..\..\Drivers\BSP\STM32F4xx-Nucleo\stm32f4xx_nucleo.h \
+  drv8313.h motor_ctrl.h pwm_out.h

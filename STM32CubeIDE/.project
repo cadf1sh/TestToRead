@@ -131,24 +131,9 @@
 			<locationURI>PARENT-1-PROJECT_LOC/MDK-ARM/drv8313.c</locationURI>
 		</link>
 		<link>
-			<name>Example/MDK-ARM/drv8313_io.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/MDK-ARM/drv8313_io.c</locationURI>
-		</link>
-		<link>
-			<name>Example/MDK-ARM/motor_sine_openloop.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/MDK-ARM/motor_sine_openloop.c</locationURI>
-		</link>
-		<link>
 			<name>Example/MDK-ARM/motor_ctrl.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/MDK-ARM/motor_ctrl.c</locationURI>
-		</link>
-		<link>
-			<name>Example/MDK-ARM/my_timer.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/MDK-ARM/my_timer.c</locationURI>
 		</link>
 		<link>
 			<name>Example/MDK-ARM/my_uart.c</name>

@@ -1,4 +1,5 @@
-stm32f4xx-nucleo/stm32f4xx_it.o: ..\Src\stm32f4xx_it.c ..\Inc\main.h \
+stm32f4xx-nucleo/stm32f4xx_it.o: ..\Src\stm32f4xx_it.c \
+  ..\MDK-ARM\app_config.h \
   ..\..\..\..\..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h \
   ..\Inc\stm32f4xx_hal_conf.h \
   ..\..\..\..\..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rcc.h \
@@ -35,5 +36,7 @@ stm32f4xx-nucleo/stm32f4xx_it.o: ..\Src\stm32f4xx_it.c ..\Inc\main.h \
   ..\..\..\..\..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim_ex.h \
   ..\..\..\..\..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_uart.h \
   ..\..\..\..\..\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_usart.h \
+  D:\Keil_v5\ARM\ARMCLANG\bin\..\include\stdio.h ..\Inc\main.h \
   ..\..\..\..\..\..\Drivers\BSP\STM32F4xx-Nucleo\stm32f4xx_nucleo.h \
-  ..\MDK-ARM\pwm_out.h ..\MDK-ARM\app_config.h ..\Inc\stm32f4xx_it.h
+  ..\MDK-ARM\drv8313.h ..\MDK-ARM\motor_ctrl.h ..\MDK-ARM\my_uart.h \
+  ..\MDK-ARM\pwm_out.h ..\Inc\stm32f4xx_it.h

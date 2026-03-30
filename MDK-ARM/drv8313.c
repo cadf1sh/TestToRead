@@ -1,197 +1,155 @@
 #include "drv8313.h"
-#include "drv8313_io.h"
 
-typedef struct
+static uint8_t drv_is_awake = 0U;//drv sleep 和reset 是否正常
+
+static void DRV8313_WriteEnable(drv_phase_t phase, GPIO_PinState state)
 {
-    uint8_t awake;
-    drv_phase_state_t phase_state[3];
-    uint16_t phase_duty[3];
-} drv8313_state_t;
-
-static drv8313_state_t s_drv;
-
-static drv8313_output_t DRV8313_MapPhaseToOutput(drv_phase_t phase)
-{
-    /*
-     * Fixed wiring map:
-     * U(RED)    -> OUT3 -> IN3/EN3
-     * V(YELLOW) -> OUT2 -> IN2/EN2
-     * W(BLUE)   -> OUT1 -> IN1/EN1
-     */
     switch (phase) {
     case DRV_PHASE_U:
-        return DRV8313_OUT3;
+        HAL_GPIO_WritePin(DRV_EN3_GPIO_PORT, DRV_EN3_PIN, state);
+        break;
 
     case DRV_PHASE_V:
-        return DRV8313_OUT2;
+        HAL_GPIO_WritePin(DRV_EN2_GPIO_PORT, DRV_EN2_PIN, state);
+        break;
 
     case DRV_PHASE_W:
+        HAL_GPIO_WritePin(DRV_EN1_GPIO_PORT, DRV_EN1_PIN, state);
+        break;
+
     default:
-        return DRV8313_OUT1;
+        break;
     }
 }
 
-static void DRV8313_ApplyOutputState(drv8313_output_t output, drv_phase_state_t state)
+static void DRV8313_WriteInputDuty(drv_phase_t phase, uint16_t duty)
 {
-    if (state == DRV_PHASE_OFF) {
-        DRV8313_IO_SetEnable(output, GPIO_PIN_RESET);
-        DRV8313_IO_SetInput(output, GPIO_PIN_RESET);
-        return;
+    switch (phase) {
+    case DRV_PHASE_U:
+        pwm_duty_set(PWM_IO_IN3, duty);
+        break;
+
+    case DRV_PHASE_V:
+        pwm_duty_set(PWM_IO_IN2, duty);
+        break;
+
+    case DRV_PHASE_W:
+        pwm_duty_set(PWM_IO_IN1, duty);
+        break;
+
+    default:
+        break;
     }
-
-    DRV8313_IO_SetInput(output, (state == DRV_PHASE_POSITIVE) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-    DRV8313_IO_SetEnable(output, GPIO_PIN_SET);
-}
-
-static void DRV8313_ApplyAllCachedPhaseStates(void)
-{
-    DRV8313_ApplyOutputState(DRV8313_MapPhaseToOutput(DRV_PHASE_U), s_drv.phase_state[DRV_PHASE_U]);
-    DRV8313_ApplyOutputState(DRV8313_MapPhaseToOutput(DRV_PHASE_V), s_drv.phase_state[DRV_PHASE_V]);
-    DRV8313_ApplyOutputState(DRV8313_MapPhaseToOutput(DRV_PHASE_W), s_drv.phase_state[DRV_PHASE_W]);
 }
 
 void DRV8313_Init(void)
 {
-    s_drv.awake = 0U;
-    s_drv.phase_state[DRV_PHASE_U] = DRV_PHASE_OFF;
-    s_drv.phase_state[DRV_PHASE_V] = DRV_PHASE_OFF;
-    s_drv.phase_state[DRV_PHASE_W] = DRV_PHASE_OFF;
-    s_drv.phase_duty[DRV_PHASE_U] = PWM_DUTY_MIN;
-    s_drv.phase_duty[DRV_PHASE_V] = PWM_DUTY_MIN;
-    s_drv.phase_duty[DRV_PHASE_W] = PWM_DUTY_MIN;
+    GPIO_InitTypeDef gpio = {0};
 
-    DRV8313_IO_Init();
+    pwm_out_init();
+
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+
+    gpio.Pin = DRV_EN1_PIN | DRV_EN3_PIN | DRV_NSLEEP_PIN | DRV_NRESET_PIN;
+    gpio.Mode = GPIO_MODE_OUTPUT_PP;
+    gpio.Pull = GPIO_NOPULL;
+    gpio.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(GPIOB, &gpio);
+
+    gpio.Pin = DRV_EN2_PIN;
+    HAL_GPIO_Init(GPIOC, &gpio);
+
+    gpio.Pin = DRV_NFAULT_PIN;
+    gpio.Mode = GPIO_MODE_INPUT;
+    gpio.Pull = GPIO_PULLUP;
+    gpio.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOB, &gpio);
+
+    drv_is_awake = 0U;
     DRV8313_EnterSafeState();
 }
 
 void DRV8313_EnterSafeState(void)
 {
     DRV8313_AllPhaseOff();
-    DRV8313_IO_SetNReset(GPIO_PIN_RESET);
-    DRV8313_IO_SetNSleep(GPIO_PIN_RESET);
-    s_drv.awake = 0U;
+    HAL_GPIO_WritePin(DRV_NRESET_GPIO_PORT, DRV_NRESET_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(DRV_NSLEEP_GPIO_PORT, DRV_NSLEEP_PIN, GPIO_PIN_RESET);
+    drv_is_awake = 0U;
 }
 
-void DRV8313_Sleep(void)
-{
-    DRV8313_EnterSafeState();
-}
-
-HAL_StatusTypeDef DRV8313_Wakeup(void)
+HAL_StatusTypeDef DRV8313_Wakeup(void)//状态管理，防止睡眠和复位
 {
     DRV8313_AllPhaseOff();
-    DRV8313_IO_SetNReset(GPIO_PIN_RESET);
-    DRV8313_IO_SetNSleep(GPIO_PIN_RESET);
+
+    HAL_GPIO_WritePin(DRV_NRESET_GPIO_PORT, DRV_NRESET_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(DRV_NSLEEP_GPIO_PORT, DRV_NSLEEP_PIN, GPIO_PIN_RESET);
     HAL_Delay(DRV_WAKE_DELAY_MS);
 
-    DRV8313_IO_SetNSleep(GPIO_PIN_SET);
+    HAL_GPIO_WritePin(DRV_NSLEEP_GPIO_PORT, DRV_NSLEEP_PIN, GPIO_PIN_SET);
     HAL_Delay(DRV_WAKE_DELAY_MS);
 
-    DRV8313_IO_SetNReset(GPIO_PIN_SET);
+    HAL_GPIO_WritePin(DRV_NRESET_GPIO_PORT, DRV_NRESET_PIN, GPIO_PIN_SET);
     HAL_Delay(DRV_POST_WAKE_DELAY_MS);
 
-    s_drv.awake = 1U;
-    DRV8313_ApplyAllCachedPhaseStates();
-
+    drv_is_awake = 1U;
     return DRV8313_IsFaultActive() ? HAL_ERROR : HAL_OK;
-}
-
-HAL_StatusTypeDef DRV8313_Reset(void)
-{
-    if (s_drv.awake == 0U) {
-        return DRV8313_Wakeup();
-    }
-
-    DRV8313_IO_AllOutputsOff();
-    DRV8313_IO_SetNReset(GPIO_PIN_RESET);
-    HAL_Delay(DRV_RESET_PULSE_MS);
-    DRV8313_IO_SetNReset(GPIO_PIN_SET);
-    HAL_Delay(DRV_POST_WAKE_DELAY_MS);
-
-    DRV8313_ApplyAllCachedPhaseStates();
-
-    return DRV8313_IsFaultActive() ? HAL_ERROR : HAL_OK;
-}
-
-HAL_StatusTypeDef DRV8313_ClearFault(void)
-{
-    return DRV8313_Reset();
 }
 
 uint8_t DRV8313_IsAwake(void)
 {
-    return s_drv.awake;
+    return drv_is_awake;
 }
 
 uint8_t DRV8313_IsFaultActive(void)
 {
-    return (DRV8313_IO_ReadNFault() == DRV_NFAULT_ACTIVE_LEVEL) ? 1U : 0U;
+    return (HAL_GPIO_ReadPin(DRV_NFAULT_GPIO_PORT, DRV_NFAULT_PIN) == DRV_NFAULT_ACTIVE_LEVEL) ? 1U : 0U;
 }
 
-void DRV8313_EnableAllOutputs(void)
+void DRV8313_EnableAllOutputs(void)//微步细分EN开关
 {
-    if (s_drv.awake == 0U) {
+    if (drv_is_awake == 0U) {
         return;
     }
 
-    DRV8313_IO_SetEnable(DRV8313_OUT1, GPIO_PIN_SET);
-    DRV8313_IO_SetEnable(DRV8313_OUT2, GPIO_PIN_SET);
-    DRV8313_IO_SetEnable(DRV8313_OUT3, GPIO_PIN_SET);
+    DRV8313_WriteEnable(DRV_PHASE_U, GPIO_PIN_SET);
+    DRV8313_WriteEnable(DRV_PHASE_V, GPIO_PIN_SET);
+    DRV8313_WriteEnable(DRV_PHASE_W, GPIO_PIN_SET);
 }
 
-void DRV8313_SetPhaseState(drv_phase_t phase, drv_phase_state_t state)
+void DRV8313_SetPhaseState(drv_phase_t phase, drv_phase_state state)//六步换向单步设置
 {
-    if (phase > DRV_PHASE_W) {
+    if ((phase > DRV_PHASE_W) || (drv_is_awake == 0U)) {
         return;
     }
 
-    s_drv.phase_state[phase] = state;
-    s_drv.phase_duty[phase] = (state == DRV_PHASE_POSITIVE) ? PWM_DUTY_MAX : PWM_DUTY_MIN;
-
-    if (s_drv.awake != 0U) {
-        DRV8313_ApplyOutputState(DRV8313_MapPhaseToOutput(phase), state);
-    }
-}
-
-drv_phase_state_t DRV8313_GetPhaseState(drv_phase_t phase)
-{
-    if (phase > DRV_PHASE_W) {
-        return DRV_PHASE_OFF;
-    }
-
-    return s_drv.phase_state[phase];
-}
-
-void DRV8313_SetPhasePwmDuty(drv_phase_t phase, uint16_t duty_0_to_1000)
-{
-    if (phase > DRV_PHASE_W) {
+    if (state == DRV_PHASE_OFF) {
+        DRV8313_WriteEnable(phase, GPIO_PIN_RESET);
+        DRV8313_WriteInputDuty(phase, PWM_DUTY_MIN);
         return;
     }
 
-    s_drv.phase_duty[phase] = duty_0_to_1000;
-
-    if (s_drv.awake != 0U) {
-        DRV8313_IO_SetInputDuty(DRV8313_MapPhaseToOutput(phase), duty_0_to_1000);
-    }
+    DRV8313_WriteInputDuty(phase, (state == DRV_PHASE_POSITIVE) ? PWM_DUTY_MAX : PWM_DUTY_MIN);
+    DRV8313_WriteEnable(phase, GPIO_PIN_SET);
 }
 
-uint16_t DRV8313_GetPhasePwmDuty(drv_phase_t phase)
+void DRV8313_SetPhasePwmDuty(drv_phase_t phase, uint16_t duty)//微步细分PWM设置
 {
-    if (phase > DRV_PHASE_W) {
-        return PWM_DUTY_MIN;
+    if ((phase > DRV_PHASE_W) || (drv_is_awake == 0U)) {
+        return;
     }
 
-    return s_drv.phase_duty[phase];
+    DRV8313_WriteInputDuty(phase, duty);
 }
 
 void DRV8313_AllPhaseOff(void)
 {
-    s_drv.phase_state[DRV_PHASE_U] = DRV_PHASE_OFF;
-    s_drv.phase_state[DRV_PHASE_V] = DRV_PHASE_OFF;
-    s_drv.phase_state[DRV_PHASE_W] = DRV_PHASE_OFF;
-    s_drv.phase_duty[DRV_PHASE_U] = PWM_DUTY_MIN;
-    s_drv.phase_duty[DRV_PHASE_V] = PWM_DUTY_MIN;
-    s_drv.phase_duty[DRV_PHASE_W] = PWM_DUTY_MIN;
+    DRV8313_WriteEnable(DRV_PHASE_U, GPIO_PIN_RESET);
+    DRV8313_WriteEnable(DRV_PHASE_V, GPIO_PIN_RESET);
+    DRV8313_WriteEnable(DRV_PHASE_W, GPIO_PIN_RESET);
 
-    DRV8313_IO_AllOutputsOff();
+    DRV8313_WriteInputDuty(DRV_PHASE_U, PWM_DUTY_MIN);
+    DRV8313_WriteInputDuty(DRV_PHASE_V, PWM_DUTY_MIN);
+    DRV8313_WriteInputDuty(DRV_PHASE_W, PWM_DUTY_MIN);
 }

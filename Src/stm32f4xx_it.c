@@ -19,10 +19,19 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
-#include "pwm_out.h"
+#include "app_config.h"
 #include "stm32f4xx_it.h"
-   
+
+/*
+ * 中断壳子文件。
+ *
+ * 当前工程真正和业务相关的中断只有两个：
+ * 1. SysTick_Handler：给 HAL 提供毫秒节拍；
+ * 2. TIM1_UP_TIM10_IRQHandler：转给 pwm_out，高频刷新正弦 PWM。
+ *
+ * 其余大量异常处理函数基本沿用了 Cube 模板。
+ */
+
 /** @addtogroup STM32F4xx_HAL_Examples
   * @{
   */
@@ -139,6 +148,7 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
+  /* HAL_Delay / HAL_GetTick 都依赖这个节拍。 */
   HAL_IncTick();
 }
 
@@ -170,6 +180,7 @@ void SysTick_Handler(void)
 
 void TIM1_UP_TIM10_IRQHandler(void)
 {
+  /* TIM1 的更新中断最终服务于 motor_ctrl 里的微步高频任务。 */
   pwm_out_tim_irqhandler();
 }
 
